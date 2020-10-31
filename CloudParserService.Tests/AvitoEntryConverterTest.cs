@@ -53,9 +53,9 @@ namespace CloudParserService.Tests
     [TestClass]
     public class AvitoEntryConverterTest
     {
-        public string _data;
-        public AvitoEntryConverter _converter;
-        public Entry _res;
+        private string _data;
+        private AvitoEntryConverter _converter;
+        private Entry _res;
         
 
         [TestInitialize]
@@ -70,9 +70,9 @@ namespace CloudParserService.Tests
         public void ConvertImagesTest()
         {
             var _images = new List<string>() { "https://03.img.avito.st/image/1/9pRiGra_Wn0Uv6h7AjHa-5K5XHfceV6P0LlYe9q_WH3W_w 1.5x" };
-            for (int i = 0; i < _images.Count; i++)
+            foreach (var t in _images)
             {
-                Assert.IsTrue(_res.Images.Contains(_images[i]));
+                Assert.IsTrue(_res.Images.Contains(t));
             }
         }
 

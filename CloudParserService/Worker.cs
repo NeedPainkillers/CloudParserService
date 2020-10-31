@@ -32,10 +32,12 @@ namespace CloudParserService
             _logger.LogInformation(LogInfo.ServiceStarted, "Worker started at: {time}", DateTimeOffset.Now);
             while (!stoppingToken.IsCancellationRequested)
             {
-                var data = await _parser.GetData(_settings.uri);
-                _logger.LogInformation(LogInfo.DataParsed, "Parser get {count} entries", data.Count());
+                var data = (await _parser.GetData(_settings.uri)).ToList();
 
-                if (data.Count() > 0)
+                var count = data.Count();
+                _logger.LogInformation(LogInfo.DataParsed, "Parser get {count} entries", count);
+
+                if (count > 0)
                 {
                     var processedData = data.AsParallel().Select(x => _converter.Convert(x)).ToList();
                     _logger.LogInformation(LogInfo.DataParsed, "Plaintext data converted to objects");

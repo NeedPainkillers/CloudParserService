@@ -6,17 +6,17 @@ namespace CloudParserService.Lib
 {
     public class AvitoEntryConverter : IConvert
     {
-        readonly private string _imageRegex = "<img.*?srcset=\"(.*?)\"";
-        readonly private string _titleRegex = "<a.*? href=\"(.*?)\".*?title=\"(.*?)\"";
-        readonly private string _priceRegex = "<meta\\s*?itemprop=\"price\"\\s*?content=\"(.*?)\">";
-        readonly private string _priceCurrencyRegex = "<meta\\s*?itemprop=\"priceCurrency\"\\s*?content=\"(.*?)\">";
-        readonly private string _locationRegex = "geo-address.*?<span>(.*?)</span>";
-        readonly private string _timeRegex = "([a-zA-ZА-Яа-я]*\\s*?[0-9]{2}:[0-9]{2})</span>";
+        private readonly string _imageRegex = "<img.*?srcset=\"(.*?)\"";
+        private readonly string _titleRegex = "<a.*? href=\"(.*?)\".*?title=\"(.*?)\"";
+        private readonly string _priceRegex = "<meta\\s*?itemprop=\"price\"\\s*?content=\"(.*?)\">";
+        private readonly string _priceCurrencyRegex = "<meta\\s*?itemprop=\"priceCurrency\"\\s*?content=\"(.*?)\">";
+        private readonly string _locationRegex = "geo-address.*?<span>(.*?)</span>";
+        private readonly string _timeRegex = "([a-zA-ZА-Яа-я]*\\s*?[0-9]{2}:[0-9]{2})</span>";
 
-        readonly private IDataProvider _dataSGProvider = new SingleGroupProvider();
-        readonly private IDataProvider _dataMGProvider = new MultipleGroupsProvider();
+        private readonly IDataProvider _dataSGProvider = new SingleGroupProvider();
+        private readonly IDataProvider _dataMGProvider = new MultipleGroupsProvider();
 
-        readonly private IDataProvider _dataMFProvider = new MultipleFieldsProvider();
+        private readonly IDataProvider _dataMFProvider = new MultipleFieldsProvider();
         public Entry Convert(string data)
         {
             var price = _dataSGProvider.Get(data, _priceRegex);
@@ -29,15 +29,17 @@ namespace CloudParserService.Lib
 
             var images = _dataMFProvider.GetAll(data, _imageRegex);
 
-            Entry entry = new Entry()
+            var urlTitleList = urlTitle.ToList();
+
+            var entry = new Entry()
             {
                 Images = images,
                 Location = location,
                 Price = price,
                 PriceCurrency = priceCurrency,
                 Time = time,
-                Title = urlTitle.ElementAt(2),
-                Url = urlTitle.ElementAt(1)
+                Title = urlTitleList.ElementAt(2),
+                Url = urlTitleList.ElementAt(1)
             };
             return entry;
         }
